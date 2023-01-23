@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import OfficeuseSerializer,userstorytableSerializer
 from rest_framework import status,viewsets
-from .models import Officeuse,Project,Epic,User_story,Table,Role,userstorytable
+from .models import Officeuse,Project,Epic,User_story,Table,Role, device, userstoryepic, userstoryrole,userstorytable
 from django.views.decorators.csrf import csrf_exempt
 import pandas as pd
 
@@ -28,14 +28,14 @@ def apiOverview(request):
 # 	serializer = OfficeuseSerializer(tasks, many=True)
 # 	return Response(serializer.data)
 
-@api_view(['GET'])
-def taskEpic(request):
-	tasks = Epic.objects.filter()
-	abcd = []
-	for i in Epic.objects.filter():
+# @api_view(['GET'])
+# def taskEpic(request):
+# 	tasks = Epic.objects.filter()
+# 	abcd = []
+# 	for i in Epic.objects.filter():
 		
-		abcd.append(i.Epic)
-	return Response(abcd)
+# 		abcd.append(i.Epic)
+# 	return Response(abcd)
 @api_view(['GET'])
 def taskRole_Name(request):
 	abcd = []
@@ -83,6 +83,7 @@ def taskRole_Name(request):
 @api_view(['POST'])
 def taskCreateeeeee(request):
 	data=request.data
+	print("ASS",data)
 	a = Project(Project_Name=data["Projects"])
 	a.save()
 	print(data["Projects"])
@@ -142,17 +143,7 @@ def taskCreateeeeee(request):
 	
 # 	print(obj)
 # 	return Response(userstorytable_dict)
-@api_view(['POST'])
-def taskdeletee(request):
-	datas = request.data
-	
-	print("AAAAAA",datas)
-	Table.objects.filter(Project_id=datas).delete()
-	Project.objects.filter(id=datas).delete()
-	# userstorytable.objects.filter(User_Story__Project_id = datas["id"]).delete()
-	# print(userstorytable.objects.filter(User_Story__Project_id = datas["id"]).delete())
-	
-	return Response('Item succsesfully delete!')
+
 
 
 @api_view(['GET'])
@@ -207,3 +198,128 @@ def taskUpdateee(request):
 	# 	"Purpose":user.Table.Purpose,"CRUD_NAME":user.crud)
 	# return Response(request.data)
 	
+@api_view(['POST'])
+def taskproject(request):
+	data=request.data
+	print("ASS",data)
+	a = Project(Project_Name=data["Project"])
+	a.save()
+	print(data["Project"])
+	print("aa",a)
+	return Response(request.data)
+
+@api_view(['GET'])
+def taskListproject(request):
+	tasks = Project.objects.filter()
+	abcd = []
+	for i in Project.objects.filter():
+		
+		abcd.append(i.Project_Name)
+	a=[]
+	for element in abcd:
+		if element not in a:
+			a.append(element)
+		
+	return Response(a)
+	
+@api_view(['POST'])
+def taskadddetails(request):
+	data=request.data
+	print("ASS",data)
+	a = Project(Project_Name=data["Project"])
+	a.save()
+	print(data["Project"])
+	print("aa",a)
+
+@api_view(['POST'])
+def taskaddfull(request):
+	data = request.data
+	a = Project(Project_Name=data["Projectt"])
+	a.save()
+	print(data["Projectt"])
+	print("aa",a)
+	
+	b = Epic(Project=a,Epic=request.data["Epicc"])
+	b.save()
+	print(data["Epicc"])
+	print("bb",b)
+	c = Role(Project=a,Role_Name=request.data["Rolee"])
+	c.save()
+	print(data["Rolee"])
+	print("cc",c)
+	d = User_story(Project=a,User_story=request.data['Userstory'])
+	d.save()
+	e = userstoryepic(Project=a,Epic=b,User_story=d)
+	e.save()
+	f = userstoryrole(Project=a,Role=c,User_story=d)
+	f.save()
+
+	g = device(Project=a,User_story=d,userstoryepic=e,userstoryrole=f,Portal=request.data['Portal'],website=request.data['website'],Application=request.data['Application'])
+	
+	print("ture",g.Portal,g.Application,g.website)
+	g.save()
+	return Response(request.data)
+
+@api_view(['GET'])
+def taskListadddetails(request):
+	di =[]
+
+	for user in device.objects.filter():
+		lis = {"id":user.User_story.Project.id,
+		"Projectt" :user.User_story.Project.Project_Name,
+		"Userstory":user.User_story.User_story,
+		"Epicc":user.userstoryepic.Epic.Epic,
+		"Rolee":user.userstoryrole.Role.Role_Name,
+		"Portal":user.Portal,
+		"website":user.website,
+		"Application":user.Application}
+		di.append(lis)
+	return Response(di)
+@api_view(['POST'])	
+def taskupd(request):#stillnot using update link in frontend
+	datas = request.data
+	print("aabcd",datas)
+	# a= Project.objects.filter(id=datas["id"])
+	# a.update(Project_Name=datas["Projectt"])
+	a= Project.objects.filter(id=datas["id"])
+	a.update(Project_Name=datas["Projectt"])
+	# print("assasa",a)
+	b = Epic.objects.filter(Project_id = datas["id"])
+	b.update(Epic=datas["Epicc"])
+	# print("asas",b)
+	c = Role.objects.filter(Project_id = datas["id"])
+	c.update(Role_Name=datas["Rolee"])
+	d = User_story.objects.filter(Project_id = datas["id"])
+	d.update(User_story =datas["Userstory"])
+	
+	g = device.objects.filter(Project_id = datas["id"])
+	g.update(Portal=datas['Portal'],website=datas['website'],Application=datas['Application'])
+	return Response(request.data)
+
+
+@api_view(['GET'])
+def taskEpic(request):
+	abcd = []
+	for i in Epic.objects.filter():
+		
+		abcd.append(i.Epic)
+	a=[]
+	for element in abcd:
+		if element not in a:
+			a.append(element)
+	return Response(a)
+@api_view(['POST'])
+def taskdeletee(request):
+	datas = request.data
+	
+	print("AAAAAA",datas)
+	# Table.objects.filter(Project_id=datas).delete()
+	Project.objects.filter(id=datas).delete()
+	# userstorytable.objects.filter(User_Story__Project_id = datas["id"]).delete()
+	# print(userstorytable.objects.filter(User_Story__Project_id = datas["id"]).delete())
+	
+	return Response('Item succsesfully delete!')
+@api_view(['GET'])
+def taskfilter(request):
+	datas = request.data
+	 

@@ -30,10 +30,9 @@ class Role(models.Model):
     
 class User_story(models.Model):
     Project = models.ForeignKey(Project,on_delete=models.CASCADE)
-    Epic = models.ForeignKey(Epic, on_delete=models.CASCADE)
-    Role = models.ForeignKey(Role,on_delete=models.CASCADE)
-    what = models.TextField()
-    why = models.TextField()
+    # Epic = models.ForeignKey(Epic, on_delete=models.CASCADE)
+    # Role = models.ForeignKey(Role,on_delete=models.CASCADE)
+    User_story = models.TextField()
     
 class Table(models.Model):#User_story
    Project = models.ForeignKey(Project,on_delete=models.CASCADE)
@@ -45,3 +44,21 @@ class userstorytable(models.Model):
     Table = models.ForeignKey(Table, on_delete=models.CASCADE)
     # crud_create = models.BooleanField(blank=True, null=True,default=0)
     crud = models.CharField(max_length=10,blank=True,null=True,default=0)  
+
+class userstoryepic(models.Model):
+    Project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    Epic = models.ForeignKey(Epic, on_delete=models.CASCADE)
+    User_story = models.ForeignKey(User_story, on_delete=models.CASCADE)
+class userstoryrole(models.Model):
+    Project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    Role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    User_story = models.ForeignKey(User_story, on_delete=models.CASCADE)
+class device(models.Model):
+    Project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    User_story = models.ForeignKey(User_story, on_delete=models.CASCADE)
+    userstoryepic = models.ForeignKey(userstoryepic, on_delete=models.CASCADE)
+    userstoryrole = models.ForeignKey(userstoryrole, on_delete=models.CASCADE)
+    Portal = models.CharField(max_length=10,blank=True,default=0)
+    website = models.CharField(max_length=10,blank=True,null=True,default=0)
+    Application = models.CharField(max_length=20,blank=True,null=True,default=0)
+    
